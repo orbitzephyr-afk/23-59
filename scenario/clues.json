@@ -1,0 +1,77 @@
+{
+  "C0_EARPHONE_ECHO": {
+    "id": "C0_EARPHONE_ECHO",
+    "name": "耳机串频残音",
+    "text": "23:53 隧道断网瞬间，降噪耳机刺啦串进嘶哑急喊：“……别合闸！江心隧道没断电，快跑！别告诉岚岚……”",
+    "present_tags": {
+      "default": ["TAG_LAST_WORDS", "TAG_LANLAN"]
+    },
+    "puzzle_role": "hint"
+  },
+  "C1_OFFICIAL_LIE": {
+    "id": "C1_OFFICIAL_LIE",
+    "name": "官方事故通报",
+    "text": "半年前 23:59，7 号线老检修工赵国栋在江心隧道触电身亡。公司通报定性为“个人违章、忘拉总闸”。",
+    "present_tags": {
+      "default": []
+    },
+    "puzzle_role": "decoy"
+  },
+  "C2_HALF_TESTIMONY": {
+    "id": "C2_HALF_TESTIMONY",
+    "name": "匿名半页问询表",
+    "text": "林岚手包里露出半页撕开的事故问询表，只留陈默“师父忘拉闸”的签字，旧信封上没有寄件人信息。",
+    "present_tags": {
+      "chen": ["TAG_ACCUSATION_CHEN"],
+      "default": []
+    },
+    "puzzle_role": "decoy"
+  },
+  "C3_WHISPER_BRIBE": {
+    "id": "C3_WHISPER_BRIBE",
+    "name": "车尾密谈",
+    "text": "车尾装睡偷听到周明远威胁陈默：“你妈手术那十万块不是白垫的，审批单我来销，把巡检单烧干净。”",
+    "present_tags": {
+      "default": ["TAG_BRIBE_10W"]
+    },
+    "puzzle_role": "slot_2"
+  },
+  "C4_APPROVAL_SLIP": {
+    "id": "C4_APPROVAL_SLIP",
+    "name": "免停运审批单与底单",
+    "text": "周明远私签的《免停运强行通车审批单》原件，逼老赵带电作业。背面竟夹着寄给林岚匿名信的快递底单。",
+    "present_tags": {
+      "default": ["TAG_APPROVAL_SLIP"]
+    },
+    "puzzle_role": "slot_1"
+  },
+  "C5_LIN_IDENTITY": {
+    "id": "C5_LIN_IDENTITY",
+    "name": "林岚的身份",
+    "text": "中段冷面女乘客原名赵岚，是老赵亲生女儿。她因半年前冷战深感愧疚，又被匿名信误导，错恨了陈默。",
+    "present_tags": {
+      "default": ["TAG_LIN_IDENTITY"]
+    },
+    "puzzle_role": "hint"
+  },
+  "C6_K14_HAZARD": {
+    "id": "C6_K14_HAZARD",
+    "name": "检修记录本数据",
+    "text": "老赵留下的检修残页：江心隧道 K14+200 绝缘跌至 0.3MΩ，今夜暴雨渗水，明早首班车必短路起火！",
+    "present_tags": {
+      "default": ["TAG_K14_HAZARD"]
+    },
+    "physical_item": "ITEM_LOGBOOK",
+    "puzzle_role": "slot_4"
+  },
+  "C7_BADGE_LAST_WORDS": {
+    "id": "C7_BADGE_LAST_WORDS",
+    "name": "旧工牌背面刻字",
+    "text": "老赵旧工牌背面被陈默用螺丝刀刻满小字：“快跑。别告诉岚岚我疼。修好 K14。”老赵至死未怪过徒弟。",
+    "present_tags": {
+      "default": ["TAG_LAST_WORDS"]
+    },
+    "physical_item": "ITEM_LOGBOOK",
+    "puzzle_role": "slot_3"
+  }
+}

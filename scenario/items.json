@@ -1,0 +1,24 @@
+{
+  "ITEM_APPROVAL_SLIP": {
+    "id": "ITEM_APPROVAL_SLIP",
+    "name": "《5.14 免停运强行通车审批单》原件",
+    "desc": "藏在周明远公文包夹层里的原始签字审批单，背面夹着寄给林岚匿名信的快递底单。",
+    "destroyable": true
+  },
+  "ITEM_LOGBOOK": {
+    "id": "ITEM_LOGBOOK",
+    "name": "老赵检修记录本与旧工牌",
+    "desc": "陈默贴身藏了半年的实物：记录着 K14+200 绝缘临界值 0.3MΩ 的残页，以及背面刻满遗言的老赵旧工牌。",
+    "physical_proof_for_lu": true
+  },
+  "ITEM_FAKE_TESTIMONY": {
+    "id": "ITEM_FAKE_TESTIMONY",
+    "name": "匿名半页问询表与录音笔",
+    "desc": "林岚随身携带的半页撕裂问询表（仅留陈默签字）与处于录制状态的微型录音笔。"
+  },
+  "ITEM_POLICE_BADGE": {
+    "id": "ITEM_POLICE_BADGE",
+    "name": "人民警察证",
+    "desc": "陆建军夹克内袋里的藏青色证件套。"
+  }
+}

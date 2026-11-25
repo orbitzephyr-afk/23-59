@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>《23:59》末班七号线 · AI NPC 时间循环推理</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body data-visual="loop">
+  <!-- 全屏水下隧道动态背景 -->
+  <canvas id="tunnel-canvas" aria-hidden="true"></canvas>
+  <div id="ambient-overlay" aria-hidden="true"></div>
+
+  <!-- 顶部地铁电子报站栏 -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-badge">LINE 7</div>
+      <div>
+        <h1 class="brand-title">《23:59》<span class="brand-sub">末班七号线 · 江心隧道</span></h1>
+      </div>
+    </div>
+
+    <div class="led-cluster">
+      <div class="led-chip">第 <span id="loop-count">1</span> 次循环</div>
+      <div class="led-clock" id="led-clock">23:52</div>
+      <div class="led-turn">回合 <span id="turn-indicator">1/8</span></div>
+    </div>
+
+    <div class="top-actions">
+      <button id="btn-skip-t2" class="btn btn-ghost hidden" title="跳过开场直接从 23:53（已收听耳机残音）重开">⚡ 跳至 23:53</button>
+      <button id="btn-restart" class="btn btn-ghost" title="重新开始本轮循环（保留线索）">↺ 重启循环</button>
+      <button id="btn-token" class="btn btn-ghost" title="可选填写魔搭访问令牌启用真实大模型">🔑 模型令牌</button>
+      <button id="btn-inspector" class="btn btn-accent" title="展开 Agent 私有记忆、内心独白与规则校验日志">🧪 Agent 透视</button>
+    </div>
+  </header>
+
+  <!-- 车厢全景车窗 + 三区俯视交互条 -->
+  <section class="carriage-strip">
+    <div class="carriage-header">
+      <span class="carriage-label">江心水下隧道 · 7 号线末班车厢（点击区域设置本回合移动目的地）</span>
+      <span id="transit-badge" class="transit-badge hidden">列车高速穿行水下隧道 · AI 决策中…</span>
+    </div>
+    <div class="zones-grid" id="zones-grid">
+      <!-- 动态渲染 FRONT / MID / REAR -->
+    </div>
+  </section>
+
+  <!-- 主三栏工作台 -->
+  <main class="workspace">
+    <!-- 左栏：4位 AI NPC 量化状态卡 -->
+    <aside class="panel panel-npcs">
+      <div class="panel-title">
+        <span>车厢乘客（4 位 AI NPC）</span>
+        <span class="panel-sub" id="player-items-badge">随身物：降噪耳机</span>
+      </div>
+      <div id="npc-list" class="npc-list"></div>
+    </aside>
+
+    <!-- 中栏：剧情事件流 + 交互控制台 -->
+    <section class="panel panel-stage">
+      <div class="panel-title">
+        <span>车厢实况记录</span>
+        <span id="current-zone-pill" class="zone-pill">当前位置：中段座位区</span>
+      </div>
+
+      <div id="event-feed" class="event-feed"></div>
+
+      <div class="controls-box">
+        <div class="mode-tabs" id="mode-tabs">
+          <button class="mode-btn active" data-mode="SPEAK_PRIVATE">💬 单独私聊</button>
+          <button class="mode-btn" data-mode="SPEAK_PUBLIC">📢 全车公开发言</button>
+          <button class="mode-btn" data-mode="OBSERVE">👁 观察细节</button>
+          <button class="mode-btn" data-mode="WAIT">😴 静观 / 装睡</button>
+        </div>
+
+        <div class="control-row" id="target-clue-row">
+          <div class="field-group" id="target-group">
+            <label for="select-target">对象（同区）</label>
+            <select id="select-target"></select>
+          </div>
+          <div class="field-group" id="clue-group">
+            <label for="select-clue">附带出示线索牌（可选）</label>
+            <select id="select-clue">
+              <option value="">不出示线索牌</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="select-move">先移动到（可选）</label>
+            <select id="select-move">
+              <option value="">留在当前区域</option>
+              <option value="FRONT">车头区 (FRONT)</option>
+              <option value="MID">中段座位区 (MID)</option>
+              <option value="REAR">车尾连接处 (REAR)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="hints-bar" id="hints-bar"></div>
+
+        <div class="input-row" id="input-row">
+          <input
+            id="speech-input"
+            type="text"
+            maxlength="160"
+            placeholder="自由输入你想说的话（也可点上方灵感提示，或直接亮线索牌）…"
+            autocomplete="off"
+          />
+          <button id="btn-submit-turn" class="btn btn-primary">执行本回合</button>
+        </div>
+        <div id="input-error" class="input-error hidden"></div>
+      </div>
+    </section>
+
+    <!-- 右栏：线索牌库 + 4槽真相拼图板 + 笔记 -->
+    <aside class="panel panel-clues">
+      <div class="panel-title">
+        <span>循环线索本（跨循环保留）</span>
+        <span class="panel-sub" id="clue-count">1 / 8</span>
+      </div>
+      <div id="clue-list" class="clue-list"></div>
+
+      <div class="divider"></div>
+
+      <div class="panel-title">
+        <span>真相拼图板（代码校验）</span>
+        <span id="puzzle-status-badge" class="puzzle-badge">未完成</span>
+      </div>
+      <div id="puzzle-slots" class="puzzle-slots"></div>
+      <div class="puzzle-actions">
+        <button id="btn-check-puzzle" class="btn btn-primary btn-sm">校验真相拼图</button>
+        <span id="puzzle-hint" class="puzzle-hint"></span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="panel-title">
+        <span>观察笔记</span>
+      </div>
+      <ul id="notebook-list" class="notebook-list"></ul>
+    </aside>
+  </main>
+
+  <!-- 右侧滑出：Agent 工程透视面板（默认收起） -->
+  <div id="inspector-drawer" class="inspector-drawer hidden" aria-hidden="true">
+    <div class="inspector-header">
+      <div>
+        <h2>🧪 Agent 工程透视面板</h2>
+        <p class="inspector-sub">实时观测私有记忆隔离、内心独白、动作 JSON 与规则引擎 PASS / REJECTED / INTERCEPTED 闭环</p>
+      </div>
+      <button id="btn-close-inspector" class="btn btn-ghost">✕ 关闭</button>
+    </div>
+    <div class="inspector-body">
+      <div class="inspector-section">
+        <h3>世界关键标志位（Flags & Items）</h3>
+        <pre id="inspector-flags" class="code-box"></pre>
+      </div>
+      <div class="inspector-section">
+        <h3>NPC 私有记忆隔离视图</h3>
+        <div id="inspector-memories" class="memory-grid"></div>
+      </div>
+      <div class="inspector-section">
+        <h3>回合决策与规则校验轨迹</h3>
+        <div id="inspector-logs" class="log-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全屏血红点阵时钟回滚过场（失败回档 A） -->
+  <div id="rollback-overlay" class="rollback-overlay hidden">
+    <div class="arc-flash" id="arc-flash"></div>
+    <div class="rollback-content">
+      <div class="rollback-label">23:59 · 执念反噬 · 时间回滚</div>
+      <div class="rollback-clock" id="rollback-clock">23:59</div>
+      <p class="rollback-desc" id="rollback-desc"></p>
+      <div class="rollback-actions hidden" id="rollback-actions">
+        <button id="btn-rollback-t1" class="btn btn-ghost">从 23:52 重新开始</button>
+        <button id="btn-rollback-t2" class="btn btn-primary">⚡ 跳至 23:53（已收听耳机残音）</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- T8 终局拼图最后十秒确认弹窗 -->
+  <div id="final-puzzle-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <h2>⏱ 23:59 最后十秒！</h2>
+      <p>你已集齐全部四张核心真相牌！请在时钟跨入 00:00 前确认右下角拼图板（或直接在下方选择），完成拼合后点击跨入零点。</p>
+      <div id="final-puzzle-slots" class="puzzle-slots"></div>
+      <div id="final-puzzle-feedback" class="puzzle-hint"></div>
+      <div class="modal-actions">
+        <button id="btn-final-check-go" class="btn btn-primary">确认拼图并跨入 00:00</button>
+        <button id="btn-final-skip" class="btn btn-ghost">直接跨入 00:00</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 00:00 结局展示层（昏暗 / 正常 / 高亮） -->
+  <div id="ending-overlay" class="ending-overlay hidden">
+    <div class="ending-card">
+      <div class="ending-clock" id="ending-clock">00:00 · 终点站</div>
+      <h2 class="ending-title" id="ending-title"></h2>
+      <p class="ending-narration" id="ending-narration"></p>
+      <div class="ending-farewells" id="ending-farewells"></div>
+      <div class="modal-actions">
+        <button id="btn-ending-t2" class="btn btn-primary">⚡ 跳至 23:53 探索其他结局</button>
+        <button id="btn-ending-t1" class="btn btn-ghost">从 23:52 重开一局</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 模型令牌配置弹窗（仅存浏览器内存，不落盘） -->
+  <div id="token-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <h2>🔑 魔搭 API-Inference 访问令牌（可选）</h2>
+      <p>若服务端启用了 Mock 模式或免费额度耗尽，可在此填入你自己的魔搭访问令牌（仅保存在本次页面内存中，通过 <code>X-User-Token</code> 请求头发送，绝不落盘）。留空则使用服务端默认配置。</p>
+      <input id="token-input" type="password" placeholder="粘贴魔搭 ModelScope Access Token…" />
+      <div class="modal-actions">
+        <button id="btn-save-token" class="btn btn-primary">保存令牌</button>
+        <button id="btn-clear-token" class="btn btn-ghost">清除</button>
+        <button id="btn-close-token" class="btn btn-ghost">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/main.js"></script>
+</body>
+</html>

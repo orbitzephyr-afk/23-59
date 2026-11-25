@@ -1,0 +1,79 @@
+{
+  "title": "23:59",
+  "subtitle": "末班七号线",
+  "max_turns": 8,
+  "clocks": {
+    "1": "23:52",
+    "2": "23:53",
+    "3": "23:54",
+    "4": "23:55",
+    "5": "23:56",
+    "6": "23:57",
+    "7": "23:58",
+    "8": "23:59"
+  },
+  "midnight_clock": "00:00",
+  "zones": [
+    {
+      "id": "FRONT",
+      "name": "车头区",
+      "desc": "紧邻驾驶室，车门侧挂着红色紧急制动拉环，头顶电子屏闪烁时间。"
+    },
+    {
+      "id": "MID",
+      "name": "中段座位区",
+      "desc": "车厢开阔明亮，冰冷车窗外水下灯牌交替飞掠。"
+    },
+    {
+      "id": "REAR",
+      "name": "车尾连接处",
+      "desc": "灯管滋滋频闪，角落立着封闭垃圾箱与线路检修柜，最易藏匿私语。"
+    }
+  ],
+  "zone_names": {
+    "FRONT": "车头区",
+    "MID": "中段座位区",
+    "REAR": "车尾连接处"
+  },
+  "player_start_zone": "MID",
+  "move_order": ["chen", "zhou", "lin", "lu"],
+  "stat_min": 0,
+  "stat_max": 100,
+  "per_turn_stat_cap": 30,
+  "memory_limit": 12,
+  "lu_hearsay_cap": 45,
+  "lu_resolve_threshold": 70,
+  "lu_physical_bonus": 70,
+  "initial_clues": ["C1_OFFICIAL_LIE"],
+  "initial_flags": {
+    "approval_slip_status": "HELD",
+    "logbook_handed": false,
+    "lin_target": "chen",
+    "lin_forgave": false,
+    "lu_active": false,
+    "lu_physical_seen": false,
+    "t2_earphone_done": false,
+    "t4_whisper_done": false,
+    "awaiting_final_puzzle": false
+  },
+  "puzzle_solution": {
+    "1": "C4_APPROVAL_SLIP",
+    "2": "C3_WHISPER_BRIBE",
+    "3": "C7_BADGE_LAST_WORDS",
+    "4": "C6_K14_HAZARD"
+  },
+  "puzzle_slots_meta": [
+    { "slot": "1", "label": "拼图 1 · 事故真正起因" },
+    { "slot": "2", "label": "拼图 2 · 伪证与封口黑幕" },
+    { "slot": "3", "label": "拼图 3 · 死者真实心意" },
+    { "slot": "4", "label": "拼图 4 · 困住列车的未完之愿" }
+  ],
+  "puzzle_messages": {
+    "solved": "你已洞悉真相，现在去这一轮里亲手改变它。",
+    "wrong": "某块似乎只是表象或放错了位置，再核对一下细节。",
+    "incomplete": "拼图尚未填满，已自动保存当前进度。"
+  },
+  "destroy_zone": "REAR",
+  "brake_zone": "FRONT",
+  "opening_narration": "暴雨夜 23:52。你在 7 号线末班车上惊醒，耳机滑落半边，车门暗红锁死。窗外是深不见底的江心水下隧道，公放甜美地重复着同一句报站——这趟车似乎永远跨不过 23:59。"
+}
